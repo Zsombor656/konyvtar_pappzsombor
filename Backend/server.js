@@ -21,7 +21,7 @@ db.connect((err) => {
     }
     console.log('kapcs jó.');
 });
-app.get('/api/konyvek', (req, res) => {
+app.get('/konyvek', (req, res) => {
     const sqlSelect = "SELECT * FROM konyv";
     db.query(sqlSelect, (err, results) => {
         if (err) {
@@ -33,10 +33,10 @@ app.get('/api/konyvek', (req, res) => {
     });
 });
 
-app.post('/api/ujkonyv', (req, res) => {
-    const { cim, szerzo, kiado, ev } = req.body;
-    const sqlInsert = "INSERT INTO konyvtar (cim, szerzo, kiado, ev) VALUES (?, ?, ?, ?)";
-    db.query(sqlInsert, [cim, szerzo, kiado, ev], (err, result) => {
+app.post('/ujkonyv',express.json(), (req, res) => {
+    const { konyv_id,cim,szerzo,mufaj_id } = req.body;
+    const sqlInsert = "INSERT INTO konyv (konyv_id,cim, szerzo, mufaj_id) VALUES (?, ?, ?, ?)";
+    db.query(sqlInsert, [konyv_id,cim,szerzo,mufaj_id], (err, result) => {
         if (err) {
             console.error('Hiba a beszúrás során:', err);
             res.status(500).send('Hiba a beszúrás során');
@@ -46,9 +46,9 @@ app.post('/api/ujkonyv', (req, res) => {
     });
 });
 
-app.delete('/api/konyv/:id', (req, res) => {
-    const { id } = req.params;
-    const sqlDelete = "DELETE FROM konyvtar WHERE id = ?";
+app.delete('/konyvtorles/:id', (req, res) => {
+    const id  = req.params.id;
+    const sqlDelete = "DELETE FROM konyv WHERE konyv_id = ?";
     db.query(sqlDelete, [id], (err, result) => {
         if (err) {
             console.error('Hiba a törlés során:', err);
