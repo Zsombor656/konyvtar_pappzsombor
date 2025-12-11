@@ -21,6 +21,7 @@ db.connect((err) => {
     }
     console.log('kapcs jó.');
 });
+
 app.get('/konyvek', (req, res) => {
     const sqlSelect = "SELECT * FROM konyv";
     db.query(sqlSelect, (err, results) => {
@@ -33,18 +34,19 @@ app.get('/konyvek', (req, res) => {
     });
 });
 
-app.post('/ujkonyv',express.json(), (req, res) => {
-    const { konyv_id,cim,szerzo,mufaj_id } = req.body;
-    const sqlInsert = "INSERT INTO konyv (konyv_id,cim, szerzo, mufaj_id) VALUES (?, ?, ?, ?)";
-    db.query(sqlInsert, [konyv_id,cim,szerzo,mufaj_id], (err, result) => {
-        if (err) {
-            console.error('Hiba a beszúrás során:', err);
-            res.status(500).send('Hiba a beszúrás során');
-        } else {
-            res.status(201).send('Könyv hozzáadva');
-        }
+
+
+app.post("/ujkonyv", (req, res) => {
+    const { cim, szerzo, mufaj_id } = req.body;
+    const sql = "INSERT INTO konyv (cim, szerzo, mufaj_id) VALUES (?, ?, ?)";
+    db.query(sql, [cim, szerzo, mufaj_id], (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: "Hiba a beszúrás során" });
+      }
+      res.json({ message: "Könyv hozzáadva", insertedId: result.insertId });
     });
-});
+  });
+  
 
 app.delete('/konyvtorles/:id', (req, res) => {
     const id  = req.params.id;
